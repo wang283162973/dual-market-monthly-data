@@ -399,10 +399,10 @@ def sector_turnover_daily(members, stock_rows):
     }
 
 
-def relative_daily(sector, all_a):
+def relative_daily(numerator, denominator_daily):
     output = {}
-    for date_text, item in sector.items():
-        denominator = safe_float((all_a.get(date_text) or {}).get("per_company"))
+    for date_text, item in numerator.items():
+        denominator = safe_float((denominator_daily.get(date_text) or {}).get("per_company"))
         if denominator and denominator > 0:
             output[date_text] = {"multiple": item["per_company"] / denominator}
     return output
@@ -510,7 +510,7 @@ def main():
     broker_daily = sector_turnover_daily(members["broker"], state["stockRows"])
     internet_daily = sector_turnover_daily(members["internet"], state["stockRows"])
     broker_relative = relative_daily(broker_daily, all_daily)
-    internet_relative = relative_daily(internet_daily, all_daily)
+    internet_relative = relative_daily(internet_daily, broker_daily)
     qfq_maps = {code: qfq_daily(state["qfqRows"].get(code) or []) for code in members["qfq"]}
 
     maps = {
