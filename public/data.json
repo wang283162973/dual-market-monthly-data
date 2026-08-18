@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-08-18T23:45:48+08:00",
+  "generatedAt": "2026-08-18T23:48:20+08:00",
   "currentMonth": "2026-08",
   "latestTradeDate": "2026-08-18",
   "source": "东方财富妙想全A正式日线+东方财富板块快照与前复权日线",
@@ -22259,9 +22259,9 @@
         ],
         [
           20.05525925,
-          22.72726374,
+          22.72726372,
           20.05525925,
-          22.72726374
+          22.72726372
         ]
       ],
       "firstMonth": "1992-09",
@@ -28890,11 +28890,9 @@
     "expectedSnapshotCount": 195,
     "miaoxiangQfqCount": 4,
     "miaoxiangBjCount": 5,
-    "failureCount": 2,
-    "failures": [
-      "板块快照组600456-601990:502 Server Error: Bad Gateway for url: https://push2.eastmoney.com/api/qt/ulist.np/get?secids=1.600456%2C1.600459%2C1.600489%2C1.600490%2C1.600497%2C1.600531%2C",
-      "板块快照组601995-920751:502 Server Error: Bad Gateway for url: https://push2.eastmoney.com/api/qt/ulist.np/get?secids=1.601995%2C1.603045%2C1.603072%2C1.603124%2C1.603132%2C1.603271%2C"
-    ],
+    "exchangeFallbackCount": 190,
+    "failureCount": 0,
+    "failures": [],
     "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。"
   }
 }
