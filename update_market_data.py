@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 import uuid
 from collections import defaultdict
@@ -29,6 +30,7 @@ REQUIRED_IDS = {
     "stock_600362_qfq_close", "stock_300059_qfq_close",
     "stock_300033_qfq_close", "stock_600036_qfq_close",
 }
+QFQ_NAMES = {"600362": "江西铜业", "300059": "东方财富", "300033": "同花顺", "600036": "招商银行"}
 
 
 def safe_float(value):
@@ -59,14 +61,15 @@ def request_json(url, *, params=None, headers=None, timeout=25):
     return response.json()
 
 
-def fetch_all_a(now):
+def fetch_miaoxiang_bundle(now):
     api_key = (os.environ.get("EM_API_KEY") or "").strip()
     if not api_key:
         raise RuntimeError("EM_API_KEY is not configured")
     month = now.strftime("%Y-%m")
+    stock_names = "、".join(f"{name}{code}" for code, name in QFQ_NAMES.items())
     query = (
-        f"选定实体的{month}-01至{now:%Y-%m-%d}每日收盘价(算术平均)、"
-        "成交额(合计)、成交量(合计)、上涨家数、下跌家数、平盘家数"
+        f"{month}-01至{now:%Y-%m-%d}：全部A股每日收盘价(算术平均)、成交额(合计)、"
+        f"成交量(合计)、上涨家数、下跌家数、平盘家数；{stock_names}每日前复权收盘价"
     )
     response = requests.post(
         MIAOXIANG_URL,
@@ -93,10 +96,23 @@ def fetch_all_a(now):
         "上涨家数": "up", "下跌家数": "down", "平盘家数": "flat",
     }
     rows = {}
+    stock_rows = defaultdict(dict)
     for table in tables:
         raw = table.get("rawTable") or {}
         dates = raw.get("headName") or []
+        entity_name = str(table.get("entityName") or table.get("title") or "")
+        code_match = re.search(r"(\d{6})", entity_name)
+        stock_code = code_match.group(1) if code_match and code_match.group(1) in QFQ_NAMES else None
         for field_key, field_name in (table.get("nameMap") or {}).items():
+            if stock_code and str(field_name) == "收盘价":
+                values = raw.get(str(field_key)) or []
+                for index, raw_date in enumerate(dates):
+                    date_text = str(raw_date)[:10]
+                    if date_text.startswith(month) and index < len(values):
+                        value = safe_float(values[index])
+                        if value is not None:
+                            stock_rows[stock_code][date_text] = {"date": date_text, "close": value}
+                continue
             output_name = wanted.get(str(field_name))
             if not output_name:
                 continue
@@ -120,23 +136,39 @@ def fetch_all_a(now):
         valid.append(row)
     if not valid:
         raise RuntimeError("妙想未返回完整全A日线")
-    return sorted(valid, key=lambda item: item["date"])
+    stock_output = {
+        code: [items[date_text] for date_text in sorted(items)]
+        for code, items in stock_rows.items() if items
+    }
+    return sorted(valid, key=lambda item: item["date"]), stock_output
 
 
 def fetch_snapshots(codes, today):
     rows = {}
+    failures = []
     headers = {"User-Agent": "Mozilla/5.0", "Referer": "https://quote.eastmoney.com/"}
     for code_group in chunks(sorted(codes), 55):
-        payload = request_json(
-            SNAPSHOT_URL,
-            params={
-                "secids": ",".join(secid(code) for code in code_group),
-                "fields": "f2,f5,f6,f12,f14,f124",
-                "fltt": "2",
-            },
-            headers=headers,
-            timeout=20,
-        )
+        payload = None
+        last_error = None
+        for attempt in range(2):
+            try:
+                payload = request_json(
+                    SNAPSHOT_URL,
+                    params={
+                        "secids": ",".join(secid(code) for code in code_group),
+                        "fields": "f2,f5,f6,f12,f14,f124",
+                        "fltt": "2",
+                    },
+                    headers=headers,
+                    timeout=20,
+                )
+                break
+            except Exception as exc:  # noqa: BLE001
+                last_error = exc
+                time.sleep(0.6 + attempt)
+        if payload is None:
+            failures.append(short_error(f"板块快照组{code_group[0]}-{code_group[-1]}", last_error))
+            continue
         for item in ((payload.get("data") or {}).get("diff") or []):
             code = str(item.get("f12") or "")
             timestamp = int(item.get("f124") or 0)
@@ -154,7 +186,7 @@ def fetch_snapshots(codes, today):
         time.sleep(0.15)
     if not rows:
         raise RuntimeError("东方财富批量快照无当日数据")
-    return rows
+    return rows, failures
 
 
 def fetch_qfq_month(code, month, end_day):
@@ -338,26 +370,31 @@ def main():
         state = reset_state_for_new_month(state, month)
 
     failures = []
+    bundle_qfq = {}
     try:
-        state["allARows"] = fetch_all_a(now)
+        state["allARows"], bundle_qfq = fetch_miaoxiang_bundle(now)
     except Exception as exc:  # noqa: BLE001
-        failures.append(short_error("全A", exc))
+        failures.append(short_error("妙想全A与个股", exc))
 
     active_broker = [item for item in members["broker"] if not item.get("end") or item["end"] >= f"{month}-01"]
     market_codes = set(members["gold"]) | set(members["nonferrous"])
     market_codes |= {item["code"] for item in active_broker} | {item["code"] for item in members["internet"]}
     try:
-        snapshots = fetch_snapshots(market_codes, today)
+        snapshots, snapshot_failures = fetch_snapshots(market_codes, today)
+        failures.extend(snapshot_failures)
         for code, row in snapshots.items():
             state["stockRows"][code] = merge_row_list(state["stockRows"].get(code) or [], [row])
     except Exception as exc:  # noqa: BLE001
         failures.append(short_error("板块快照", exc))
 
     for code in members["qfq"]:
+        if bundle_qfq.get(code):
+            state["qfqRows"][code] = bundle_qfq[code]
+            continue
         try:
             state["qfqRows"][code] = fetch_qfq_month(code, month, today)
         except Exception as exc:  # noqa: BLE001
-            failures.append(short_error(f"{code}前复权", exc))
+            failures.append(short_error(f"{code}前复权备用", exc))
 
     all_daily = all_a_daily(state.get("allARows") or [])
     gold_daily = sector_price_daily(members["gold"], state["stockRows"], state.get("priorClose") or {})
@@ -396,6 +433,13 @@ def main():
     date_sets.extend(set(qfq_maps[code]) for code in members["qfq"])
     common_dates = set.intersection(*date_sets) if date_sets and all(date_sets) else set()
     latest_complete = max(common_dates) if common_dates else payload.get("latestTradeDate")
+    today_snapshot_count = len([
+        code for code in market_codes
+        if state["stockRows"].get(code) and state["stockRows"][code][-1]["date"] == today
+    ])
+    if latest_complete == today and today_snapshot_count < len(market_codes) * 0.95:
+        earlier = [date_text for date_text in common_dates if date_text < today]
+        latest_complete = max(earlier) if earlier else payload.get("latestTradeDate")
     state["updatedAt"] = now.replace(microsecond=0).isoformat()
     payload.update({
         "schemaVersion": 4,
@@ -405,7 +449,8 @@ def main():
         "source": "东方财富妙想全A正式日线+东方财富板块快照与前复权日线",
         "quality": {
             "completeThrough": latest_complete,
-            "stockSnapshotCount": len([code for code, rows in state["stockRows"].items() if rows and rows[-1]["date"] == today]),
+            "stockSnapshotCount": today_snapshot_count,
+            "expectedSnapshotCount": len(market_codes),
             "failures": failures,
             "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。",
         },

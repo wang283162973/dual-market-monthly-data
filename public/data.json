@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-08-18T23:37:10+08:00",
+  "generatedAt": "2026-08-18T23:39:53+08:00",
   "currentMonth": "2026-08",
   "latestTradeDate": "2026-08-18",
   "source": "东方财富妙想全A正式日线+东方财富板块快照与前复权日线",
@@ -28887,12 +28887,9 @@
   "quality": {
     "completeThrough": "2026-08-18",
     "stockSnapshotCount": 195,
+    "expectedSnapshotCount": 195,
     "failures": [
-      "板块快照:502 Server Error: Bad Gateway for url: https://push2.eastmoney.com/api/qt/ulist.np/get?secids=1.601995%2C1.603045%2C1.603072%2C1.603124%2C1.603132%2C1.603271%2C1.603399%2C1.603527%2C1.603799%2C1.603876%2C1.603937%2C1.603",
-      "600362前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "300059前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "300033前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "600036前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+      "板块快照:东方财富批量快照无当日数据"
     ],
     "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。"
   }
