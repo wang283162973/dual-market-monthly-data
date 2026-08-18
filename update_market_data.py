@@ -13,6 +13,8 @@ import requests
 OUTPUT = Path(__file__).parent / "public" / "data.json"
 MIAOXIANG_URL = "https://ai-saas.eastmoney.com/proxy/b/mcp/tool/searchData"
 ALL_A_ENTITY_TAG = {"entityId": "001071", "fullName": "全部A股", "classCode": "005202"}
+QUOTE_URL = "https://push2.eastmoney.com/api/qt/stock/get?secid=47.800005&fields=f43,f47,f48,f57,f58,f59,f86"
+BREADTH_URL = "https://push2.eastmoney.com/api/qt/ulist.np/get?secids=1.000002,0.399107,0.899050&fields=f12,f14,f104,f105,f106,f124"
 
 
 def safe_float(value):
@@ -90,6 +92,50 @@ def fetch_current_month(now: datetime):
     return sorted(valid, key=lambda item: item["date"])
 
 
+def fetch_public_json(url):
+    last_error = None
+    for _ in range(3):
+        try:
+            response = requests.get(
+                url,
+                headers={"User-Agent": "Mozilla/5.0", "Referer": "https://quote.eastmoney.com/"},
+                timeout=12,
+            )
+            response.raise_for_status()
+            return response.json()
+        except Exception as exc:  # noqa: BLE001
+            last_error = exc
+    raise last_error or RuntimeError("Public quote request failed")
+
+
+def fetch_intraday(now):
+    quote = (fetch_public_json(QUOTE_URL).get("data") or {})
+    breadth = (fetch_public_json(BREADTH_URL).get("data") or {}).get("diff") or []
+    quote_timestamp = int(quote.get("f86") or 0)
+    breadth_timestamps = [int(item.get("f124") or 0) for item in breadth if int(item.get("f124") or 0) > 0]
+    if not quote_timestamp or not breadth_timestamps:
+        raise RuntimeError("Intraday timestamp is missing")
+    quote_date = datetime.fromtimestamp(quote_timestamp, ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
+    breadth_date = datetime.fromtimestamp(min(breadth_timestamps), ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
+    if quote_date != breadth_date or quote_date != now.strftime("%Y-%m-%d"):
+        raise RuntimeError("Intraday quote and breadth dates do not match today")
+    normal_count = sum(
+        int(item.get("f104") or 0) + int(item.get("f105") or 0) + int(item.get("f106") or 0)
+        for item in breadth
+    )
+    amount = safe_float(quote.get("f48"))
+    close_raw = safe_float(quote.get("f43"))
+    decimals = int(quote.get("f59") or 2)
+    if amount is None or close_raw is None or normal_count <= 0:
+        raise RuntimeError("Intraday values are incomplete")
+    return {
+        "date": quote_date,
+        "close": close_raw / (10 ** decimals),
+        "amount": amount,
+        "per_company": amount / 100_000_000 / normal_count,
+    }
+
+
 def ohlc(values):
     return [round(values[0], 8), round(values[-1], 8), round(min(values), 8), round(max(values), 8)]
 
@@ -112,6 +158,14 @@ def main():
     now = datetime.now(ZoneInfo("Asia/Shanghai"))
     payload = json.loads(OUTPUT.read_text(encoding="utf-8"))
     rows = fetch_current_month(now)
+    latest_mode = "official"
+    try:
+        intraday = fetch_intraday(now)
+        if intraday["date"] > rows[-1]["date"]:
+            rows.append(intraday)
+            latest_mode = "intraday"
+    except Exception as exc:  # noqa: BLE001
+        print(f"Intraday fallback skipped: {exc}")
     month = rows[-1]["date"][:7]
     series = {item["id"]: item for item in payload["series"]}
     closes = [item["close"] for item in rows]
@@ -128,10 +182,15 @@ def main():
         "generatedAt": now.replace(microsecond=0).isoformat(),
         "currentMonth": month,
         "latestTradeDate": rows[-1]["date"],
-        "source": "东方财富妙想全部A股统一数据",
+        "latestMode": latest_mode,
+        "source": (
+            "东方财富妙想正式日线+公开实时行情"
+            if latest_mode == "intraday"
+            else "东方财富妙想全部A股正式日线"
+        ),
     })
     OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({"latestTradeDate": rows[-1]["date"], "rows": len(rows)}, ensure_ascii=False))
+    print(json.dumps({"latestTradeDate": rows[-1]["date"], "latestMode": latest_mode, "rows": len(rows)}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
