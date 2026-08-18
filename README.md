@@ -1,8 +1,9 @@
-# 双指标月线云端数据
+# 十五项月线云端数据
 
-- 云端只保存公开行情结果，不保存个人资料。
-- `EM_API_KEY` 必须配置为仓库加密 Secret，不得写入代码、JSON或APK。
-- 定时任务在A股交易时段约每30分钟运行一次，手机只读取 `public/data.json`。
-- 手机必须校验 `schemaVersion`、`generatedAt`、`latestTradeDate` 和两个指标是否完整；异常数据不得覆盖上次已核实数据。
+- 手机固定读取 `public/data.json`，历史月K随APK内置，联网后只接受完整的15项新版数据。
+- `state/current_month.json` 保存当月逐日原始行情；更新器先追加当天数据，再重算当月开、高、低、收，不能用当天快照冒充整月数据。
+- 全A三项使用东方财富妙想“全部A股”正式日线；黄金、有色、券商和互联网金融使用东方财富股票快照；4只个股使用东方财富前复权日线。
+- 云端交易日约每30分钟更新。15项能够共同确认的最晚日期写入 `latestTradeDate`。
+- 任一接口失败时保留上次正确值，并把失败原因写入 `quality.failures`，不得用空值覆盖历史。
+- `EM_API_KEY` 只存放在GitHub加密Secret中，不能写入代码、JSON或APK。
 - 固定数据地址：`https://raw.githubusercontent.com/wang283162973/dual-market-monthly-data/main/public/data.json`
-- 已完成交易日使用妙想正式日线；只有公开实时行情日期晚于正式日线时，才追加当天盘中临时值。

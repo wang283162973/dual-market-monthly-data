@@ -1,4 +1,4 @@
-name: Update dual monthly indicators
+name: Update fifteen monthly indicators
 
 on:
   workflow_dispatch:
@@ -24,6 +24,6 @@ jobs:
         run: |
           git config user.name "market-data-bot"
           git config user.email "market-data-bot@users.noreply.github.com"
-          git add public/data.json
+          git add public/data.json state/current_month.json
           git diff --cached --quiet || git commit -m "Update market data"
           git push
