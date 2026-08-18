@@ -256,7 +256,6 @@ def fetch_snapshots(codes, today, month):
                 last_error = exc
                 time.sleep(0.6 + attempt)
         if payload is None:
-            failures.append(short_error(f"板块快照组{code_group[0]}-{code_group[-1]}", last_error))
             fallback_codes.extend(code_group)
             continue
         for item in ((payload.get("data") or {}).get("diff") or []):
@@ -284,9 +283,13 @@ def fetch_snapshots(codes, today, month):
                     rows[code] = future.result()
                 except Exception as exc:  # noqa: BLE001
                     failures.append(short_error(f"交易所备用{code}", exc))
+    unresolved = [code for code in fallback_codes if not code.startswith("9") and code not in rows]
+    if unresolved:
+        failures.append(f"板块备用仍缺{len(unresolved)}只:{','.join(unresolved[:12])}")
     if not rows:
         raise RuntimeError("东方财富批量快照无当日数据")
-    return rows, failures
+    fallback_success_count = len([code for code in fallback_codes if code in rows])
+    return rows, failures, fallback_success_count
 
 
 def fetch_qfq_month(code, month, end_day):
@@ -480,8 +483,9 @@ def main():
     active_broker = [item for item in members["broker"] if not item.get("end") or item["end"] >= f"{month}-01"]
     market_codes = set(members["gold"]) | set(members["nonferrous"])
     market_codes |= {item["code"] for item in active_broker} | {item["code"] for item in members["internet"]}
+    exchange_fallback_count = 0
     try:
-        snapshots, snapshot_failures = fetch_snapshots(market_codes, today, month)
+        snapshots, snapshot_failures, exchange_fallback_count = fetch_snapshots(market_codes, today, month)
         failures.extend(snapshot_failures)
         for code, rows in snapshots.items():
             state["stockRows"][code] = merge_row_list(state["stockRows"].get(code) or [], rows)
@@ -557,6 +561,7 @@ def main():
             "expectedSnapshotCount": len(market_codes),
             "miaoxiangQfqCount": len(bundle_qfq),
             "miaoxiangBjCount": len([code for code, rows in bundle_bj.items() if rows]),
+            "exchangeFallbackCount": exchange_fallback_count,
             "failureCount": len(failures),
             "failures": failures[:12],
             "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。",
