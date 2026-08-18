@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-08-18T23:36:23+08:00",
+  "generatedAt": "2026-08-18T23:37:10+08:00",
   "currentMonth": "2026-08",
   "latestTradeDate": "2026-08-18",
   "source": "东方财富妙想全A正式日线+东方财富板块快照与前复权日线",
@@ -28888,11 +28888,11 @@
     "completeThrough": "2026-08-18",
     "stockSnapshotCount": 195,
     "failures": [
-      "板块快照:HTTPSConnectionPool(host='push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/ulist.np/get?secids=0.000060%2C0.000166%2C0.000506%2C0.000612%2C0.000630%2C0.000633%2C0.000657%2C0.000686%2C0.000688%2C0.0",
-      "600362前复权:HTTPSConnectionPool(host='push2his.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/stock/kline/get?secid=1.600362&klt=101&fqt=1&beg=20260801&end=20260818&lmt=40&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&field",
-      "300059前复权:HTTPSConnectionPool(host='push2his.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/stock/kline/get?secid=0.300059&klt=101&fqt=1&beg=20260801&end=20260818&lmt=40&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&field",
-      "300033前复权:HTTPSConnectionPool(host='push2his.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/stock/kline/get?secid=0.300033&klt=101&fqt=1&beg=20260801&end=20260818&lmt=40&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&field",
-      "600036前复权:HTTPSConnectionPool(host='push2his.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/stock/kline/get?secid=1.600036&klt=101&fqt=1&beg=20260801&end=20260818&lmt=40&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&field"
+      "板块快照:502 Server Error: Bad Gateway for url: https://push2.eastmoney.com/api/qt/ulist.np/get?secids=1.601995%2C1.603045%2C1.603072%2C1.603124%2C1.603132%2C1.603271%2C1.603399%2C1.603527%2C1.603799%2C1.603876%2C1.603937%2C1.603",
+      "600362前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "300059前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "300033前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "600036前复权:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     ],
     "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。"
   }
