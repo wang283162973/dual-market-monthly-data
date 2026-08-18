@@ -6,6 +6,7 @@ import re
 import time
 import uuid
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -31,6 +32,7 @@ REQUIRED_IDS = {
     "stock_300033_qfq_close", "stock_600036_qfq_close",
 }
 QFQ_NAMES = {"600362": "江西铜业", "300059": "东方财富", "300033": "同花顺", "600036": "招商银行"}
+BJ_NAMES = {"920576": "天力复合", "920634": "新威凌", "920068": "天工股份", "920078": "族兴新材", "920751": "惠同新材"}
 
 
 def safe_float(value):
@@ -43,7 +45,7 @@ def safe_float(value):
 
 def short_error(label, error):
     message = " ".join(str(error).split())
-    return f"{label}:{message[:220]}"
+    return f"{label}:{message[:160]}"
 
 
 def secid(code):
@@ -67,9 +69,11 @@ def fetch_miaoxiang_bundle(now):
         raise RuntimeError("EM_API_KEY is not configured")
     month = now.strftime("%Y-%m")
     stock_names = "、".join(f"{name}{code}" for code, name in QFQ_NAMES.items())
+    bj_names = "、".join(f"{name}{code}" for code, name in BJ_NAMES.items())
     query = (
         f"{month}-01至{now:%Y-%m-%d}：全部A股每日收盘价(算术平均)、成交额(合计)、"
-        f"成交量(合计)、上涨家数、下跌家数、平盘家数；{stock_names}每日前复权收盘价"
+        f"成交量(合计)、上涨家数、下跌家数、平盘家数；{stock_names}每日前复权收盘价；"
+        f"{bj_names}每日收盘价、成交额、成交量"
     )
     response = requests.post(
         MIAOXIANG_URL,
@@ -97,12 +101,14 @@ def fetch_miaoxiang_bundle(now):
     }
     rows = {}
     stock_rows = defaultdict(dict)
+    bj_rows = defaultdict(dict)
     for table in tables:
         raw = table.get("rawTable") or {}
         dates = raw.get("headName") or []
         entity_name = str(table.get("entityName") or table.get("title") or "")
         code_match = re.search(r"(\d{6})", entity_name)
         stock_code = code_match.group(1) if code_match and code_match.group(1) in QFQ_NAMES else None
+        bj_code = code_match.group(1) if code_match and code_match.group(1) in BJ_NAMES else None
         for field_key, field_name in (table.get("nameMap") or {}).items():
             if stock_code and str(field_name) == "收盘价":
                 values = raw.get(str(field_key)) or []
@@ -113,6 +119,24 @@ def fetch_miaoxiang_bundle(now):
                         if value is not None:
                             stock_rows[stock_code][date_text] = {"date": date_text, "close": value}
                 continue
+            if bj_code:
+                normalized_name = str(field_name)
+                output_name = None
+                if normalized_name == "收盘价":
+                    output_name = "close"
+                elif normalized_name.startswith("成交额"):
+                    output_name = "amount"
+                elif normalized_name.startswith("成交量"):
+                    output_name = "volume"
+                if output_name:
+                    values = raw.get(str(field_key)) or []
+                    for index, raw_date in enumerate(dates):
+                        date_text = str(raw_date)[:10]
+                        if date_text.startswith(month) and index < len(values):
+                            value = safe_float(values[index])
+                            if value is not None:
+                                bj_rows[bj_code].setdefault(date_text, {"date": date_text})[output_name] = value
+                    continue
             output_name = wanted.get(str(field_name))
             if not output_name:
                 continue
@@ -140,12 +164,77 @@ def fetch_miaoxiang_bundle(now):
         code: [items[date_text] for date_text in sorted(items)]
         for code, items in stock_rows.items() if items
     }
-    return sorted(valid, key=lambda item: item["date"]), stock_output
+    bj_output = {
+        code: [items[date_text] for date_text in sorted(items) if all(items[date_text].get(key) is not None for key in ("close", "amount", "volume"))]
+        for code, items in bj_rows.items()
+    }
+    return sorted(valid, key=lambda item: item["date"]), stock_output, bj_output
 
 
-def fetch_snapshots(codes, today):
+def fetch_sse_month(code, month, end_day):
+    payload = request_json(
+        f"https://yunhq.sse.com.cn:32042/v1/sh1/dayk/{code}",
+        params={
+            "select": "date,open,high,low,close,volume,amount",
+            "begin": month.replace("-", "") + "01",
+            "end": end_day.replace("-", ""),
+        },
+        headers={"User-Agent": "Mozilla/5.0", "Referer": "https://www.sse.com.cn/"},
+        timeout=20,
+    )
+    rows = []
+    for item in payload.get("kline") or []:
+        raw_date = str(item[0])
+        rows.append({
+            "date": f"{raw_date[:4]}-{raw_date[4:6]}-{raw_date[6:8]}",
+            "close": float(item[4]), "volume": float(item[5] or 0), "amount": float(item[6] or 0),
+        })
+    if not rows:
+        raise RuntimeError("上交所本月日线为空")
+    return rows
+
+
+def fetch_szse_month(code, month):
+    payload = request_json(
+        "https://www.szse.cn/api/market/ssjjhq/getHistoryData",
+        params={"cycleType": "32", "marketId": "1", "code": code},
+        headers={
+            "User-Agent": "Mozilla/5.0", "Referer": "https://www.szse.cn/market/product/stock/list/index.html",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        timeout=20,
+    )
+    rows = []
+    for item in ((payload.get("data") or {}).get("picupdata") or []):
+        if str(item[0]).startswith(month):
+            rows.append({
+                "date": item[0], "close": float(item[2]),
+                "volume": float(item[7] or 0) * 100, "amount": float(item[8] or 0),
+            })
+    if not rows:
+        raise RuntimeError("深交所本月日线为空")
+    return rows
+
+
+def fetch_exchange_month(code, month, end_day):
+    last_error = None
+    for attempt in range(3):
+        try:
+            if code.startswith("6"):
+                return fetch_sse_month(code, month, end_day)
+            if code.startswith(("0", "3")):
+                return fetch_szse_month(code, month)
+            raise RuntimeError("北交所由妙想统一补齐")
+        except Exception as exc:  # noqa: BLE001
+            last_error = exc
+            time.sleep(0.6 + attempt * 0.8)
+    raise RuntimeError(str(last_error))
+
+
+def fetch_snapshots(codes, today, month):
     rows = {}
     failures = []
+    fallback_codes = []
     headers = {"User-Agent": "Mozilla/5.0", "Referer": "https://quote.eastmoney.com/"}
     for code_group in chunks(sorted(codes), 55):
         payload = None
@@ -168,6 +257,7 @@ def fetch_snapshots(codes, today):
                 time.sleep(0.6 + attempt)
         if payload is None:
             failures.append(short_error(f"板块快照组{code_group[0]}-{code_group[-1]}", last_error))
+            fallback_codes.extend(code_group)
             continue
         for item in ((payload.get("data") or {}).get("diff") or []):
             code = str(item.get("f12") or "")
@@ -177,13 +267,23 @@ def fetch_snapshots(codes, today):
             volume_lots = safe_float(item.get("f5"))
             amount = safe_float(item.get("f6"))
             if code in codes and date_text == today and close and volume_lots and amount and amount > 0:
-                rows[code] = {
+                rows[code] = [{
                     "date": date_text,
                     "close": close,
                     "volume": volume_lots * 100,
                     "amount": amount,
-                }
+                }]
         time.sleep(0.15)
+    exchange_codes = [code for code in fallback_codes if code.startswith(("0", "3", "6"))]
+    if exchange_codes:
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            jobs = {pool.submit(fetch_exchange_month, code, month, today): code for code in exchange_codes}
+            for future in as_completed(jobs):
+                code = jobs[future]
+                try:
+                    rows[code] = future.result()
+                except Exception as exc:  # noqa: BLE001
+                    failures.append(short_error(f"交易所备用{code}", exc))
     if not rows:
         raise RuntimeError("东方财富批量快照无当日数据")
     return rows, failures
@@ -371,8 +471,9 @@ def main():
 
     failures = []
     bundle_qfq = {}
+    bundle_bj = {}
     try:
-        state["allARows"], bundle_qfq = fetch_miaoxiang_bundle(now)
+        state["allARows"], bundle_qfq, bundle_bj = fetch_miaoxiang_bundle(now)
     except Exception as exc:  # noqa: BLE001
         failures.append(short_error("妙想全A与个股", exc))
 
@@ -380,12 +481,15 @@ def main():
     market_codes = set(members["gold"]) | set(members["nonferrous"])
     market_codes |= {item["code"] for item in active_broker} | {item["code"] for item in members["internet"]}
     try:
-        snapshots, snapshot_failures = fetch_snapshots(market_codes, today)
+        snapshots, snapshot_failures = fetch_snapshots(market_codes, today, month)
         failures.extend(snapshot_failures)
-        for code, row in snapshots.items():
-            state["stockRows"][code] = merge_row_list(state["stockRows"].get(code) or [], [row])
+        for code, rows in snapshots.items():
+            state["stockRows"][code] = merge_row_list(state["stockRows"].get(code) or [], rows)
     except Exception as exc:  # noqa: BLE001
         failures.append(short_error("板块快照", exc))
+    for code, rows in bundle_bj.items():
+        if rows:
+            state["stockRows"][code] = merge_row_list(state["stockRows"].get(code) or [], rows)
 
     for code in members["qfq"]:
         if bundle_qfq.get(code):
@@ -451,7 +555,10 @@ def main():
             "completeThrough": latest_complete,
             "stockSnapshotCount": today_snapshot_count,
             "expectedSnapshotCount": len(market_codes),
-            "failures": failures,
+            "miaoxiangQfqCount": len(bundle_qfq),
+            "miaoxiangBjCount": len([code for code, rows in bundle_bj.items() if rows]),
+            "failureCount": len(failures),
+            "failures": failures[:12],
             "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。",
         },
     })
@@ -462,7 +569,7 @@ def main():
         "latestTradeDate": latest_complete,
         "currentMonth": month,
         "series": len(payload["series"]),
-        "failures": failures,
+        "failures": failures[:12],
     }, ensure_ascii=False))
 
 

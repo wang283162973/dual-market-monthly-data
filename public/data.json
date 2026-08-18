@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-08-18T23:40:59+08:00",
+  "generatedAt": "2026-08-18T23:44:28+08:00",
   "currentMonth": "2026-08",
   "latestTradeDate": "2026-08-18",
   "source": "东方财富妙想全A正式日线+东方财富板块快照与前复权日线",
@@ -22259,9 +22259,9 @@
         ],
         [
           20.05525925,
-          22.72726374,
+          22.72726372,
           20.05525925,
-          22.72726374
+          22.72726372
         ]
       ],
       "firstMonth": "1992-09",
@@ -28888,9 +28888,14 @@
     "completeThrough": "2026-08-18",
     "stockSnapshotCount": 195,
     "expectedSnapshotCount": 195,
+    "miaoxiangQfqCount": 4,
+    "miaoxiangBjCount": 5,
+    "failureCount": 4,
     "failures": [
-      "板块快照组600456-601990:502 Server Error: Bad Gateway for url: https://push2.eastmoney.com/api/qt/ulist.np/get?secids=1.600456%2C1.600459%2C1.600489%2C1.600490%2C1.600497%2C1.600531%2C1.600547%2C1.600549%2C1.600595%2C1.600615%2C1.600621%2C1.600",
-      "板块快照组601995-920751:502 Server Error: Bad Gateway for url: https://push2.eastmoney.com/api/qt/ulist.np/get?secids=1.601995%2C1.603045%2C1.603072%2C1.603124%2C1.603132%2C1.603271%2C1.603399%2C1.603527%2C1.603799%2C1.603876%2C1.603937%2C1.603"
+      "板块快照组000060-002670:HTTPSConnectionPool(host='push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/ulist.np/get?secids=0.000060%2C0.000166%2C0.000506%2C0.000612%",
+      "板块快照组002673-600392:HTTPSConnectionPool(host='push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/ulist.np/get?secids=0.002673%2C0.002736%2C0.002738%2C0.002756%",
+      "板块快照组600456-601990:HTTPSConnectionPool(host='push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/ulist.np/get?secids=1.600456%2C1.600459%2C1.600489%2C1.600490%",
+      "板块快照组601995-920751:HTTPSConnectionPool(host='push2.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/ulist.np/get?secids=1.601995%2C1.603045%2C1.603072%2C1.603124%"
     ],
     "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。"
   }
