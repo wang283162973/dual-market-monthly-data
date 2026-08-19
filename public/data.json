@@ -1,9 +1,9 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-08-19T15:53:54+08:00",
+  "generatedAt": "2026-08-19T18:56:08+08:00",
   "currentMonth": "2026-08",
-  "latestTradeDate": "2026-08-19",
-  "source": "东方财富妙想全A正式日线+东方财富板块快照与前复权日线",
+  "latestTradeDate": "2026-08-17",
+  "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线",
   "months": [
     "1992-09",
     "1992-10",
@@ -2005,10 +2005,10 @@
           32.96
         ],
         [
-          25.12232411,
-          27.84699693,
-          25.12232411,
-          29.52733394
+          25.11,
+          29.09,
+          25.11,
+          29.09
         ]
       ],
       "firstMonth": "2007-01",
@@ -28885,14 +28885,18 @@
     }
   ],
   "quality": {
-    "completeThrough": "2026-08-19",
+    "completeThrough": "2026-08-17",
+    "allACloseThrough": "2026-08-17",
     "stockSnapshotCount": 195,
-    "expectedSnapshotCount": 195,
+    "expectedSnapshotCount": 196,
     "miaoxiangQfqCount": 4,
     "miaoxiangBjCount": 5,
     "exchangeFallbackCount": 190,
-    "failureCount": 0,
-    "failures": [],
-    "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。"
+    "failureCount": 2,
+    "failures": [
+      "板块备用仍缺1只:800005",
+      "800005官方日线:HTTPSConnectionPool(host='push2his.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/stock/kline/get?secid=47.800005&klt=101&fqt=0&beg=20260801&"
+    ],
+    "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值。"
   }
 }

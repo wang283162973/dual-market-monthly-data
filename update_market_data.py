@@ -49,6 +49,8 @@ def short_error(label, error):
 
 
 def secid(code):
+    if code == "800005":
+        return "47.800005"
     return ("1." if code.startswith(("5", "6")) else "0.") + code
 
 
@@ -313,6 +315,27 @@ def fetch_qfq_month(code, month, end_day):
     return rows
 
 
+def fetch_unadjusted_close_month(code, month, end_day):
+    payload = request_json(
+        KLINE_URL,
+        params={
+            "secid": secid(code), "klt": "101", "fqt": "0",
+            "beg": month.replace("-", "") + "01", "end": end_day.replace("-", ""), "lmt": "40",
+            "fields1": "f1,f2,f3,f4,f5,f6", "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
+        },
+        headers={"User-Agent": "Mozilla/5.0", "Referer": "https://quote.eastmoney.com/"},
+        timeout=20,
+    )
+    rows = []
+    for raw in ((payload.get("data") or {}).get("klines") or []):
+        fields = raw.split(",")
+        if fields[0].startswith(month):
+            rows.append({"date": fields[0], "close": float(fields[2])})
+    if not rows:
+        raise RuntimeError(f"{code}不复权日线为空")
+    return rows
+
+
 def merge_row_list(existing, rows):
     merged = {item["date"]: item for item in existing}
     for item in rows:
@@ -481,7 +504,7 @@ def main():
         failures.append(short_error("妙想全A与个股", exc))
 
     active_broker = [item for item in members["broker"] if not item.get("end") or item["end"] >= f"{month}-01"]
-    market_codes = set(members["gold"]) | set(members["nonferrous"])
+    market_codes = {"800005"} | set(members["gold"]) | set(members["nonferrous"])
     market_codes |= {item["code"] for item in active_broker} | {item["code"] for item in members["internet"]}
     exchange_fallback_count = 0
     try:
@@ -495,6 +518,12 @@ def main():
         if rows:
             state["stockRows"][code] = merge_row_list(state["stockRows"].get(code) or [], rows)
 
+    try:
+        official_800005 = fetch_unadjusted_close_month("800005", month, today)
+        state["stockRows"]["800005"] = merge_row_list(state["stockRows"].get("800005") or [], official_800005)
+    except Exception as exc:  # noqa: BLE001
+        failures.append(short_error("800005官方日线", exc))
+
     for code in members["qfq"]:
         if bundle_qfq.get(code):
             state["qfqRows"][code] = bundle_qfq[code]
@@ -505,6 +534,11 @@ def main():
             failures.append(short_error(f"{code}前复权备用", exc))
 
     all_daily = all_a_daily(state.get("allARows") or [])
+    all_a_close_daily = {
+        row["date"]: {"close": float(row["close"])}
+        for row in state["stockRows"].get("800005", [])
+        if safe_float(row.get("close")) is not None
+    }
     gold_daily = sector_price_daily(members["gold"], state["stockRows"], state.get("priorClose") or {})
     nonferrous_daily = sector_price_daily(members["nonferrous"], state["stockRows"], state.get("priorClose") or {})
     broker_daily = sector_turnover_daily(members["broker"], state["stockRows"])
@@ -514,7 +548,7 @@ def main():
     qfq_maps = {code: qfq_daily(state["qfqRows"].get(code) or []) for code in members["qfq"]}
 
     maps = {
-        "all_a_close": monthly_ohlc(all_daily, "close"),
+        "all_a_close": monthly_ohlc(all_a_close_daily, "close"),
         "all_a_trade": monthly_ohlc(all_daily, "trade"),
         "all_a_per_company": monthly_ohlc(all_daily, "per_company"),
         "broker_per_company": monthly_ohlc(broker_daily, "per_company"),
@@ -537,7 +571,7 @@ def main():
     for series_id, value in maps.items():
         set_month(series_by_id[series_id], index, month, value, means.get(series_id))
 
-    date_sets = [set(source) for source in (all_daily, gold_daily, nonferrous_daily, broker_daily, internet_daily)]
+    date_sets = [set(source) for source in (all_a_close_daily, all_daily, gold_daily, nonferrous_daily, broker_daily, internet_daily)]
     date_sets.extend(set(qfq_maps[code]) for code in members["qfq"])
     common_dates = set.intersection(*date_sets) if date_sets and all(date_sets) else set()
     latest_complete = max(common_dates) if common_dates else payload.get("latestTradeDate")
@@ -554,9 +588,10 @@ def main():
         "generatedAt": now.replace(microsecond=0).isoformat(),
         "currentMonth": month,
         "latestTradeDate": latest_complete,
-        "source": "东方财富妙想全A正式日线+东方财富板块快照与前复权日线",
+        "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线",
         "quality": {
             "completeThrough": latest_complete,
+            "allACloseThrough": max(all_a_close_daily, default=None),
             "stockSnapshotCount": today_snapshot_count,
             "expectedSnapshotCount": len(market_codes),
             "miaoxiangQfqCount": len(bundle_qfq),
@@ -564,7 +599,7 @@ def main():
             "exchangeFallbackCount": exchange_fallback_count,
             "failureCount": len(failures),
             "failures": failures[:12],
-            "note": "云端保留当月逐日原始值后重算月K；接口失败时不清空上次正确值。",
+            "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值。",
         },
     })
     validate(payload)
