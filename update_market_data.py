@@ -539,6 +539,7 @@ def main():
         for row in state["stockRows"].get("800005", [])
         if safe_float(row.get("close")) is not None
     }
+    all_a_close_missing_dates = sorted(set(all_daily) - set(all_a_close_daily))
     gold_daily = sector_price_daily(members["gold"], state["stockRows"], state.get("priorClose") or {})
     nonferrous_daily = sector_price_daily(members["nonferrous"], state["stockRows"], state.get("priorClose") or {})
     broker_daily = sector_turnover_daily(members["broker"], state["stockRows"])
@@ -575,6 +576,9 @@ def main():
     date_sets.extend(set(qfq_maps[code]) for code in members["qfq"])
     common_dates = set.intersection(*date_sets) if date_sets and all(date_sets) else set()
     latest_complete = max(common_dates) if common_dates else payload.get("latestTradeDate")
+    if all_a_close_missing_dates:
+        before_gap = [date_text for date_text in common_dates if date_text < all_a_close_missing_dates[0]]
+        latest_complete = max(before_gap) if before_gap else payload.get("latestTradeDate")
     today_snapshot_count = len([
         code for code in market_codes
         if state["stockRows"].get(code) and state["stockRows"][code][-1]["date"] == today
@@ -592,6 +596,7 @@ def main():
         "quality": {
             "completeThrough": latest_complete,
             "allACloseThrough": max(all_a_close_daily, default=None),
+            "allACloseMissingDates": all_a_close_missing_dates,
             "stockSnapshotCount": today_snapshot_count,
             "expectedSnapshotCount": len(market_codes),
             "miaoxiangQfqCount": len(bundle_qfq),
