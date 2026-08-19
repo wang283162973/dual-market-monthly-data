@@ -27,3 +27,7 @@ jobs:
           git add public/data.json state/current_month.json
           git diff --cached --quiet || git commit -m "Update market data"
           git push
+      - name: Purge jsDelivr cache
+        continue-on-error: true
+        run: |
+          curl -fsS "https://purge.jsdelivr.net/gh/wang283162973/dual-market-monthly-data@main/public/data.json"
