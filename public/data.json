@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-08-21T11:36:09+08:00",
+  "generatedAt": "2026-08-21T12:23:32+08:00",
   "currentMonth": "2026-08",
   "latestTradeDate": "2026-08-20",
   "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线",
@@ -10648,8 +10648,8 @@
         ],
         [
           15.41439806,
-          8.43253378,
-          8.43253378,
+          8.43253379,
+          8.43253379,
           25.25288132
         ]
       ],
@@ -22259,7 +22259,7 @@
         ],
         [
           20.05525925,
-          22.54196226,
+          22.54196227,
           20.05525925,
           22.72726372
         ]
@@ -28892,10 +28892,11 @@
     "expectedSnapshotCount": 196,
     "miaoxiangQfqCount": 4,
     "miaoxiangBjCount": 5,
-    "exchangeFallbackCount": 80,
-    "failureCount": 1,
+    "exchangeFallbackCount": 190,
+    "failureCount": 2,
     "failures": [
-      "板块备用仍缺1只:800005"
+      "板块备用仍缺1只:800005",
+      "800005官方日线:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     ],
     "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值。"
   }
