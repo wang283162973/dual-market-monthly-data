@@ -592,7 +592,7 @@ def main():
         "generatedAt": now.replace(microsecond=0).isoformat(),
         "currentMonth": month,
         "latestTradeDate": latest_complete,
-        "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线",
+        "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线；券商及互联网金融按2026-08-24确认的新名单",
         "quality": {
             "completeThrough": latest_complete,
             "allACloseThrough": max(all_a_close_daily, default=None),
@@ -604,7 +604,7 @@ def main():
             "exchangeFallbackCount": exchange_fallback_count,
             "failureCount": len(failures),
             "failures": failures[:12],
-            "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值。",
+            "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值；互联网金融子集固定为同花顺、东方财富、大智慧、指南针。",
         },
     })
     validate(payload)
