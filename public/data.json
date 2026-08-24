@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-08-24T15:21:00+08:00",
+  "generatedAt": "2026-08-24T16:26:39+08:00",
   "currentMonth": "2026-08",
   "latestTradeDate": "2026-08-24",
   "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线；券商及互联网金融按2026-08-24确认的新名单",
@@ -17341,9 +17341,9 @@
         ],
         [
           24.63484516,
-          29.7119531,
+          29.71195305,
           24.63484516,
-          29.7119531
+          29.71195305
         ]
       ],
       "firstMonth": "1993-03",
@@ -28892,7 +28892,7 @@
     "expectedSnapshotCount": 189,
     "miaoxiangQfqCount": 4,
     "miaoxiangBjCount": 5,
-    "exchangeFallbackCount": 73,
+    "exchangeFallbackCount": 128,
     "failureCount": 1,
     "failures": [
       "板块备用仍缺1只:800005"
