@@ -1,8 +1,8 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-09-22T19:38:38+08:00",
+  "generatedAt": "2026-09-23T13:58:31+08:00",
   "currentMonth": "2026-09",
-  "latestTradeDate": "2026-09-17",
+  "latestTradeDate": "2026-09-22",
   "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线；券商及互联网金融按2026-08-24确认的新名单",
   "months": [
     "1992-09",
@@ -2013,9 +2013,9 @@
         ],
         [
           28.36,
-          29.28,
+          29.33,
           27.44,
-          29.28
+          29.33
         ]
       ],
       "firstMonth": "2007-01",
@@ -7240,8 +7240,8 @@
         ],
         [
           7.23824882,
-          5.04924715,
-          3.30677822,
+          2.66858301,
+          2.66858301,
           8.11796062
         ]
       ],
@@ -7656,7 +7656,7 @@
         12.02976671,
         9.94316068,
         6.06483502,
-        5.33312151
+        5.17638395
       ],
       "valueMode": "monthlyMean"
     },
@@ -10687,8 +10687,8 @@
         ],
         [
           23.71903166,
-          18.19055157,
-          9.05950228,
+          8.57810497,
+          8.57810497,
           29.92120576
         ]
       ],
@@ -11103,7 +11103,7 @@
         43.50317863,
         34.66588958,
         22.78550214,
-        17.37202215
+        16.8547329
       ],
       "valueMode": "monthlyMean"
     },
@@ -12529,7 +12529,7 @@
         ],
         [
           3.27690195,
-          3.6026265,
+          3.21447935,
           2.51992725,
           3.68580327
         ]
@@ -14964,8 +14964,8 @@
         ],
         [
           33.071,
-          30.221,
-          30.221,
+          29.976,
+          29.976,
           33.828
         ]
       ],
@@ -17399,8 +17399,8 @@
         ],
         [
           31.63021827,
-          30.55706584,
-          30.55706584,
+          30.49195836,
+          30.49195836,
           31.72305914
         ]
       ],
@@ -19864,7 +19864,7 @@
         ],
         [
           28.5548855,
-          28.23732824,
+          28.13656489,
           27.06351145,
           28.5548855
         ]
@@ -22329,7 +22329,7 @@
         ],
         [
           20.02528145,
-          19.58669997,
+          19.61187324,
           18.77678302,
           20.02528145
         ]
@@ -24234,7 +24234,7 @@
         ],
         [
           48.08,
-          44.24,
+          44.59,
           42.97,
           49.64
         ]
@@ -25649,7 +25649,7 @@
         ],
         [
           19.4,
-          18.69,
+          18.65,
           18.09,
           19.4
         ]
@@ -27078,10 +27078,10 @@
           242.33
         ],
         [
-          227.03,
-          207.2,
-          201.04,
-          227.03
+          226.83,
+          208.64,
+          200.84,
+          226.83
         ]
       ],
       "firstMonth": "2009-12",
@@ -28969,8 +28969,8 @@
         ],
         [
           40.86,
-          40.6,
-          40.6,
+          40.61,
+          40.59,
           41.83
         ]
       ],
@@ -28979,22 +28979,17 @@
     }
   ],
   "quality": {
-    "completeThrough": "2026-09-17",
-    "allACloseThrough": "2026-09-22",
+    "completeThrough": "2026-09-22",
+    "allACloseThrough": "2026-09-23",
     "allACloseMissingDates": [],
-    "stockSnapshotCount": 189,
+    "stockSnapshotCount": 182,
     "expectedSnapshotCount": 189,
     "miaoxiangQfqCount": 0,
     "miaoxiangBjCount": 0,
-    "exchangeFallbackCount": 73,
-    "failureCount": 6,
+    "exchangeFallbackCount": 18,
+    "failureCount": 1,
     "failures": [
-      "板块备用仍缺1只:800005",
-      "800005官方日线:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "600362前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "300059前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "300033前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "600036前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+      "板块备用仍缺1只:800005"
     ],
     "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值；互联网金融子集固定为同花顺、东方财富、大智慧、指南针。"
   }
