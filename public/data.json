@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-10-07T22:31:01+08:00",
+  "generatedAt": "2026-10-08T15:25:23+08:00",
   "currentMonth": "2026-10",
   "latestTradeDate": "2026-09-28",
   "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线；券商及互联网金融按2026-08-24确认的新名单",
@@ -2018,10 +2018,15 @@
           27.44,
           29.3
         ],
-        null
+        [
+          26.72,
+          26.72,
+          26.72,
+          26.72
+        ]
       ],
       "firstMonth": "2007-01",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "all_a_trade",
@@ -7249,10 +7254,15 @@
           2.99287876,
           8.11796062
         ],
-        null
+        [
+          4.15876831,
+          4.15876831,
+          4.15876831,
+          4.15876831
+        ]
       ],
       "firstMonth": "2007-01",
-      "lastMonth": "2026-09",
+      "lastMonth": "2026-10",
       "monthlyMeans": [
         null,
         null,
@@ -7663,7 +7673,7 @@
         9.94316068,
         6.06483502,
         4.90906196,
-        null
+        4.15876831
       ],
       "valueMode": "monthlyMean"
     },
@@ -10699,10 +10709,15 @@
           9.05950228,
           29.92120576
         ],
-        null
+        [
+          14.43428805,
+          14.43428805,
+          14.43428805,
+          14.43428805
+        ]
       ],
       "firstMonth": "2009-12",
-      "lastMonth": "2026-09",
+      "lastMonth": "2026-10",
       "monthlyMeans": [
         null,
         null,
@@ -11113,7 +11128,7 @@
         34.66588958,
         22.78550214,
         15.98775827,
-        null
+        14.43428805
       ],
       "valueMode": "monthlyMean"
     },
@@ -12543,10 +12558,15 @@
           2.51992725,
           3.73433749
         ],
-        null
+        [
+          3.47080841,
+          3.47080841,
+          3.47080841,
+          3.47080841
+        ]
       ],
       "firstMonth": "2009-12",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "gold_close",
@@ -14979,10 +14999,15 @@
           26.811,
           33.828
         ],
-        null
+        [
+          27.027,
+          27.027,
+          27.027,
+          27.027
+        ]
       ],
       "firstMonth": "1993-03",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "gold_trade",
@@ -17415,10 +17440,15 @@
           29.75229618,
           31.72305914
         ],
-        null
+        [
+          25.70231933,
+          25.70231933,
+          25.70231933,
+          25.70231933
+        ]
       ],
       "firstMonth": "1993-03",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "nonferrous_close",
@@ -19881,10 +19911,15 @@
           26.14610687,
           28.5548855
         ],
-        null
+        [
+          25.87129771,
+          25.87129771,
+          25.87129771,
+          25.87129771
+        ]
       ],
       "firstMonth": "1992-09",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "nonferrous_trade",
@@ -22347,10 +22382,15 @@
           18.77678302,
           20.02528145
         ],
-        null
+        [
+          19.16353313,
+          19.16353313,
+          19.16353313,
+          19.16353313
+        ]
       ],
       "firstMonth": "1992-09",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "stock_600362_qfq_close",
@@ -28999,18 +29039,17 @@
   ],
   "quality": {
     "completeThrough": "2026-09-28",
-    "allACloseThrough": null,
+    "allACloseThrough": "2026-10-08",
     "allACloseMissingDates": [],
-    "stockSnapshotCount": 0,
+    "stockSnapshotCount": 184,
     "expectedSnapshotCount": 189,
     "miaoxiangQfqCount": 0,
     "miaoxiangBjCount": 0,
-    "exchangeFallbackCount": 0,
-    "failureCount": 7,
+    "exchangeFallbackCount": 128,
+    "failureCount": 6,
     "failures": [
       "妙想全A与个股:妙想未返回完整全A日线",
-      "板块快照:东方财富批量快照无当日数据",
-      "800005官方日线:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "板块备用仍缺1只:800005",
       "600362前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
       "300059前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
       "300033前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
