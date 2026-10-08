@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-10-08T15:25:23+08:00",
+  "generatedAt": "2026-10-08T22:56:59+08:00",
   "currentMonth": "2026-10",
   "latestTradeDate": "2026-09-28",
   "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线；券商及互联网金融按2026-08-24确认的新名单",
@@ -17441,10 +17441,10 @@
           31.72305914
         ],
         [
-          25.70231933,
-          25.70231933,
-          25.70231933,
-          25.70231933
+          25.70232084,
+          25.70232084,
+          25.70232084,
+          25.70232084
         ]
       ],
       "firstMonth": "1993-03",
@@ -22383,10 +22383,10 @@
           20.02528145
         ],
         [
-          19.16353313,
-          19.16353313,
-          19.16353313,
-          19.16353313
+          19.16353283,
+          19.16353283,
+          19.16353283,
+          19.16353283
         ]
       ],
       "firstMonth": "1992-09",
@@ -29045,11 +29045,12 @@
     "expectedSnapshotCount": 189,
     "miaoxiangQfqCount": 0,
     "miaoxiangBjCount": 0,
-    "exchangeFallbackCount": 128,
-    "failureCount": 6,
+    "exchangeFallbackCount": 73,
+    "failureCount": 7,
     "failures": [
       "妙想全A与个股:妙想未返回完整全A日线",
       "板块备用仍缺1只:800005",
+      "800005官方日线:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
       "600362前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
       "300059前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
       "300033前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
