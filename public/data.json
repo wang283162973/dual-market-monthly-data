@@ -1,8 +1,8 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-10-08T22:56:59+08:00",
+  "generatedAt": "2026-10-09T15:23:31+08:00",
   "currentMonth": "2026-10",
-  "latestTradeDate": "2026-09-28",
+  "latestTradeDate": "2026-10-09",
   "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线；券商及互联网金融按2026-08-24确认的新名单",
   "months": [
     "1992-09",
@@ -2020,8 +2020,8 @@
         ],
         [
           26.72,
-          26.72,
-          26.72,
+          26.65,
+          26.65,
           26.72
         ]
       ],
@@ -3629,10 +3629,15 @@
           16.06035335,
           17.14394274
         ],
-        null
+        [
+          16.5903212,
+          16.43546949,
+          16.43546949,
+          16.5903212
+        ]
       ],
       "firstMonth": "2007-01",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "all_a_per_company",
@@ -5235,10 +5240,15 @@
           2.55728787,
           3.87765969
         ],
-        null
+        [
+          3.04893151,
+          3.4479071,
+          3.04893151,
+          3.4479071
+        ]
       ],
       "firstMonth": "2007-01",
-      "lastMonth": "2026-09",
+      "lastMonth": "2026-10",
       "monthlyMeans": [
         null,
         null,
@@ -5649,7 +5659,7 @@
         4.89019818,
         4.0700515,
         3.29900322,
-        null
+        3.24841931
       ],
       "valueMode": "monthlyMean"
     },
@@ -7256,9 +7266,9 @@
         ],
         [
           4.15876831,
+          5.74271265,
           4.15876831,
-          4.15876831,
-          4.15876831
+          5.74271265
         ]
       ],
       "firstMonth": "2007-01",
@@ -7673,7 +7683,7 @@
         9.94316068,
         6.06483502,
         4.90906196,
-        4.15876831
+        4.95074048
       ],
       "valueMode": "monthlyMean"
     },
@@ -9278,10 +9288,15 @@
           1.06752848,
           2.19587404
         ],
-        null
+        [
+          1.36400844,
+          1.66556478,
+          1.36400844,
+          1.66556478
+        ]
       ],
       "firstMonth": "2007-01",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "internet_per_company",
@@ -10711,9 +10726,9 @@
         ],
         [
           14.43428805,
+          23.927112,
           14.43428805,
-          14.43428805,
-          14.43428805
+          23.927112
         ]
       ],
       "firstMonth": "2009-12",
@@ -11128,7 +11143,7 @@
         34.66588958,
         22.78550214,
         15.98775827,
-        14.43428805
+        19.18070002
       ],
       "valueMode": "monthlyMean"
     },
@@ -12560,9 +12575,9 @@
         ],
         [
           3.47080841,
+          4.16651737,
           3.47080841,
-          3.47080841,
-          3.47080841
+          4.16651737
         ]
       ],
       "firstMonth": "2009-12",
@@ -15001,9 +15016,9 @@
         ],
         [
           27.027,
+          28.712,
           27.027,
-          27.027,
-          27.027
+          28.712
         ]
       ],
       "firstMonth": "1993-03",
@@ -17441,10 +17456,10 @@
           31.72305914
         ],
         [
-          25.70232084,
-          25.70232084,
-          25.70232084,
-          25.70232084
+          25.70231933,
+          26.6349239,
+          25.70231933,
+          26.6349239
         ]
       ],
       "firstMonth": "1993-03",
@@ -19912,10 +19927,10 @@
           28.5548855
         ],
         [
-          25.87129771,
-          25.87129771,
-          25.87129771,
-          25.87129771
+          25.87435115,
+          25.81877863,
+          25.81877863,
+          25.87435115
         ]
       ],
       "firstMonth": "1992-09",
@@ -22383,10 +22398,10 @@
           20.02528145
         ],
         [
-          19.16353283,
-          19.16353283,
-          19.16353283,
-          19.16353283
+          19.17175082,
+          19.68913205,
+          19.17175082,
+          19.68913205
         ]
       ],
       "firstMonth": "1992-09",
@@ -24293,10 +24308,15 @@
           40.92,
           49.64
         ],
-        null
+        [
+          41.89,
+          42.51,
+          41.89,
+          42.51
+        ]
       ],
       "firstMonth": "2002-01",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "stock_300059_qfq_close",
@@ -25709,10 +25729,15 @@
           17.77,
           19.4
         ],
-        null
+        [
+          17.28,
+          17.95,
+          17.28,
+          17.95
+        ]
       ],
       "firstMonth": "2010-03",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "stock_300033_qfq_close",
@@ -27140,10 +27165,15 @@
           197.06,
           227.03
         ],
-        null
+        [
+          191.3,
+          200.43,
+          191.3,
+          200.43
+        ]
       ],
       "firstMonth": "2009-12",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     },
     {
       "id": "stock_600036_qfq_close",
@@ -29031,30 +29061,29 @@
           40.51,
           41.83
         ],
-        null
+        [
+          41.71,
+          41.42,
+          41.42,
+          41.71
+        ]
       ],
       "firstMonth": "2002-04",
-      "lastMonth": "2026-09"
+      "lastMonth": "2026-10"
     }
   ],
   "quality": {
-    "completeThrough": "2026-09-28",
-    "allACloseThrough": "2026-10-08",
+    "completeThrough": "2026-10-09",
+    "allACloseThrough": "2026-10-09",
     "allACloseMissingDates": [],
-    "stockSnapshotCount": 184,
+    "stockSnapshotCount": 189,
     "expectedSnapshotCount": 189,
-    "miaoxiangQfqCount": 0,
-    "miaoxiangBjCount": 0,
-    "exchangeFallbackCount": 73,
-    "failureCount": 7,
+    "miaoxiangQfqCount": 4,
+    "miaoxiangBjCount": 5,
+    "exchangeFallbackCount": 183,
+    "failureCount": 1,
     "failures": [
-      "妙想全A与个股:妙想未返回完整全A日线",
-      "板块备用仍缺1只:800005",
-      "800005官方日线:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "600362前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "300059前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "300033前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-      "600036前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+      "板块备用仍缺1只:800005"
     ],
     "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值；互联网金融子集固定为同花顺、东方财富、大智慧、指南针。"
   }
