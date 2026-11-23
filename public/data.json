@@ -1,6 +1,6 @@
 {
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T16:32:52+08:00",
+  "generatedAt": "2026-11-23T17:05:19+08:00",
   "currentMonth": "2026-11",
   "latestTradeDate": "2026-11-20",
   "source": "800005官方序列+东方财富妙想全A成交与广度汇总+东方财富板块快照与前复权日线；券商及互联网金融按2026-08-24确认的新名单",
@@ -2027,7 +2027,7 @@
         ],
         [
           23.0,
-          20.41,
+          21.15,
           20.41,
           24.46
         ]
@@ -3644,7 +3644,7 @@
         ],
         [
           14.93543291,
-          15.59337707,
+          15.48083954,
           14.93543291,
           16.09458373
         ]
@@ -5261,7 +5261,7 @@
         ],
         [
           3.2229496,
-          2.56840417,
+          2.80783089,
           2.35883576,
           3.83320118
         ]
@@ -5679,7 +5679,7 @@
         4.0700515,
         3.29900322,
         2.89239257,
-        2.96376097
+        2.95401534
       ],
       "valueMode": "monthlyMean"
     },
@@ -7292,7 +7292,7 @@
         ],
         [
           10.53876694,
-          5.28041417,
+          4.90515085,
           3.1984262,
           10.53876694
         ]
@@ -7710,7 +7710,7 @@
         6.06483502,
         4.90906196,
         5.0508584,
-        5.03981555
+        5.03139901
       ],
       "valueMode": "monthlyMean"
     },
@@ -9323,7 +9323,7 @@
         ],
         [
           3.26991366,
-          2.05591248,
+          1.7469538,
           1.12731975,
           3.26991366
         ]
@@ -10765,7 +10765,7 @@
         ],
         [
           41.16775636,
-          18.66415876,
+          18.41875033,
           10.77910313,
           41.16775636
         ]
@@ -11183,7 +11183,7 @@
         22.78550214,
         15.98775827,
         18.91365822,
-        19.5576939
+        19.48650993
       ],
       "valueMode": "monthlyMean"
     },
@@ -12621,7 +12621,7 @@
         ],
         [
           3.90631623,
-          3.5346013,
+          3.75498143,
           2.99396488,
           4.68414823
         ]
@@ -15068,7 +15068,7 @@
         ],
         [
           22.191,
-          21.563,
+          22.794,
           21.563,
           26.355
         ]
@@ -17515,7 +17515,7 @@
         ],
         [
           21.77435698,
-          23.49165666,
+          23.3872701,
           21.77435698,
           24.10281938
         ]
@@ -19992,7 +19992,7 @@
         ],
         [
           21.47374046,
-          18.45076336,
+          19.08503817,
           18.45076336,
           22.71549618
         ]
@@ -22469,7 +22469,7 @@
         ],
         [
           16.86731746,
-          16.93118598,
+          16.80989852,
           16.66392547,
           17.57391765
         ]
@@ -29168,15 +29168,21 @@
   ],
   "quality": {
     "completeThrough": "2026-11-20",
-    "allACloseThrough": "2026-11-20",
+    "allACloseThrough": "2026-11-23",
     "allACloseMissingDates": [],
     "stockSnapshotCount": 187,
     "expectedSnapshotCount": 189,
     "miaoxiangQfqCount": 0,
     "miaoxiangBjCount": 5,
     "exchangeFallbackCount": 0,
-    "failureCount": 0,
-    "failures": [],
+    "failureCount": 5,
+    "failures": [
+      "800005官方日线:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "600362前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "300059前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "300033前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+      "600036前复权备用:('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    ],
     "note": "800005只接受代码47.800005官方序列，全部A股算术平均收盘价不得替代；云端保留当月逐日原始值后重算月K，接口失败时不清空上次正确值；互联网金融子集固定为同花顺、东方财富、大智慧、指南针。"
   }
 }
